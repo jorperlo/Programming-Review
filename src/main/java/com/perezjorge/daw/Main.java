@@ -1,34 +1,35 @@
 package com.perezjorge.daw;
 import com.perezjorge.daw.di.car.Car;
-import com.perezjorge.daw.di.car.ElectricEngine;
-import com.perezjorge.daw.di.car.GasolineEngine;
-import com.perezjorge.daw.di.notification.EmailSender;
 import com.perezjorge.daw.di.notification.NotificationService;
-import com.perezjorge.daw.di.notification.SmsSender;
+import com.perezjorge.daw.ioc.AppContext;
 
 /**
  * Punto de entrada del proyecto.
- * Creamos los objetos a mano para ver el ejemplo de DI.
+ *  Main ya no decide cómo se construyen las cosas, solo pide lo que necesita.
  */
 
 public class Main {
 
     public static void main(String[] args) {
 
+        // IoC: una entidad externa (AppContext) crea y cablea todo
+
+        AppContext context = new AppContext();
+
         // Ejemplo del coche
 
-        Car gasolineCar = new Car(new GasolineEngine());
+        Car gasolineCar = context.createCar("gasoline");
         gasolineCar.start();
 
-        Car electricCar = new Car(new ElectricEngine());
+        Car electricCar = context.createCar("electric");
         electricCar.start();
 
         // Ejemplo de notificaciones
 
-        NotificationService emailService = new NotificationService(new EmailSender());
-        emailService.notifyUser("Welcome!");
+         NotificationService emailService = context.createEmailNotificationService();
+        emailService.notifyUser("Welcome for email!");
 
-         NotificationService smsService = new NotificationService(new SmsSender());
-        smsService.notifyUser("Your code is 1234");
+        NotificationService smService = context.createSmsNotificationService();
+        smService.notifyUser("Welcome for SMS!");
     }
 }
